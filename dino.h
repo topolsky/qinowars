@@ -3,7 +3,6 @@
 
 #include <QPainter>
 
-
 class Dino
 {
 public:
@@ -21,8 +20,11 @@ public:
     void move(const QRect &bbox);
     QRectF rect();
     void setDirection(Direction dir);
+    bool collide(QPointF center, qreal radius);
+    void setCoolDown(bool cd);
 
 private:
+    bool coolDown;
     QPointF position;
     QPixmap dinoImageL;
     QPixmap dinoImageR;

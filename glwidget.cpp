@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <QTimer>
 #include <QDebug>
+#include <QMessageBox>
 
 
 #ifndef GL_MULTISAMPLE
@@ -16,7 +17,7 @@
 #endif
 
 GLWidget::GLWidget(QWidget *parent)
-    : QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
+    : QGLWidget(QGLFormat(QGL::SampleBuffers), parent), lives(1), exitGame(false)
 {
     QTime midnight(0, 0, 0);
     qsrand(midnight.secsTo(QTime::currentTime()));
@@ -31,10 +32,18 @@ GLWidget::GLWidget(QWidget *parent)
     timer.setInterval(200);
     timer.setSingleShot(false);
     connect(&timer, SIGNAL(timeout()), this, SLOT(stopDino()));
+    clsTimer.setInterval(200);
+    clsTimer.setSingleShot(false);
+    connect(&clsTimer, SIGNAL(timeout()), this, SLOT(checkCollision()));
+    coolDown.setInterval(5000);
+    coolDown.setSingleShot(true);
+    connect(&coolDown, SIGNAL(timeout()), &clsTimer, SLOT(start()));
+    coolDown.start();
     //setAutoFillBackground(false);
-    setMinimumSize(400, 400);
+    setMinimumSize(1200, 800);
     background = QPixmap(":/data/back01.jpg");
     setWindowTitle(tr("OJO DINOWARS"));
+
 }
 
 GLWidget::~GLWidget()
@@ -58,7 +67,7 @@ void GLWidget::paintEvent(QPaintEvent *event)
             bubble->drawBubble(&painter);
     }
     dino->drawDino(&painter);
-    //drawInstructions(&painter);
+    drawInstructions(&painter);
     painter.end();
 }
 
@@ -73,7 +82,7 @@ void GLWidget::showEvent(QShowEvent *event)
     Q_UNUSED(event);
     QPointF position(width()*(0.1 + (0.8*qrand()/(RAND_MAX+1.0))),
                     height()*(0.1 + (0.8*qrand()/(RAND_MAX+1.0))));
-    createBubbles(20 - bubbles.count());
+    createBubbles(10 - bubbles.count());
     dino = new Dino(position, 100);
 }
 
@@ -94,6 +103,8 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
         break;
     }
     timer.stop();
+//    if (exitGame) {
+//    }
 }
 
 void GLWidget::keyReleaseEvent(QKeyEvent *)
@@ -103,7 +114,7 @@ void GLWidget::keyReleaseEvent(QKeyEvent *)
 
 QSize GLWidget::sizeHint() const
 {
-    return QSize(400, 400);
+    return QSize(1200, 800);
 }
 
 void GLWidget::createBubbles(int number)
@@ -137,6 +148,28 @@ void GLWidget::stopDino()
     dino->setDirection(Dino::STOP);
 }
 
+void GLWidget::checkCollision()
+{
+    dino->setCoolDown(false);
+    QMutableListIterator<Bubble*> iter(bubbles);
+    while (iter.hasNext()) {
+        Bubble *bubble = iter.next();
+        if (dino->collide(bubble->position, bubble->radius)) {
+            qDebug() << "Collision!!";
+            lives--;
+            clsTimer.stop();
+            coolDown.start();
+            dino->setCoolDown(true);
+            if (lives <= 0) {
+                exitGame = true;
+                QMessageBox::information(this, "Koniec hry", "Vďaka že si si zahral/a. To je koniec!");
+                exit(1);
+            }
+            break;
+        }
+    }
+}
+
 void GLWidget::setupViewport(int width, int height)
 {
     int side = qMin(width, height);
@@ -154,8 +187,11 @@ void GLWidget::setupViewport(int width, int height)
 
 void GLWidget::drawInstructions(QPainter *painter)
 {
-    QString text = tr("Click and drag with the left mouse button "
-                      "to rotate the Qt logo.");
+    QString text;
+    if (!exitGame)
+        text = tr("Máš ešte %1 životov").arg(lives);
+    else
+        text = tr("Koniec hry!");
     QFontMetrics metrics = QFontMetrics(font());
     int border = qMax(4, metrics.leading());
 

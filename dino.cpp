@@ -4,7 +4,7 @@
 #include <QSvgRenderer>
 
 Dino::Dino(const QPointF &position, qreal width)
-    : position(position), cdir(LEFT), width(width), speed(2)
+    : coolDown(false), position(position), cdir(LEFT), width(width), speed(4)
 {
     QSvgRenderer renderer(QString(":/data/dino1.svg"));
     QImage img = QImage(width, width, QImage::Format_ARGB32);
@@ -17,6 +17,8 @@ Dino::Dino(const QPointF &position, qreal width)
 void Dino::drawDino(QPainter *painter)
 {
     painter->save();
+    if(coolDown)
+        painter->setOpacity(0.5);
     painter->translate(position.x(), position.y());
     switch(cdir) {
     case LEFT:
@@ -81,4 +83,17 @@ void Dino::setDirection(Dino::Direction dir)
     default:
         qDebug() << "Unhandled direction" << dir;
     }
+}
+
+bool Dino::collide(QPointF center, qreal radius)
+{
+    QRectF we(position.x(),position.y(),width, width);
+    qreal hr = radius/2.0;
+    QRectF them(center.x()-hr, center.y()-hr, radius, radius);
+    return we.intersects(them);
+}
+
+void Dino::setCoolDown(bool cd)
+{
+    coolDown = cd;
 }

@@ -69,13 +69,17 @@ protected:
 private slots:
     void animate();
     void stopDino();
+    void checkCollision();
 
 private:
     void createBubbles(int number);
     void drawInstructions(QPainter *painter);
     void setupViewport(int width, int height);
-
+    int lives;
+    bool exitGame;
     QTimer timer;
+    QTimer clsTimer;//collision timer
+    QTimer coolDown;
     QColor qtGreen;
     QColor qtPurple;
     GLuint object;

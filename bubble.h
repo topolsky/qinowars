@@ -52,14 +52,14 @@ public:
     void updateBrush();
     void move(const QRect &bbox);
     QRectF rect();
+    QPointF position;
+    qreal radius;
 
 private:
     QColor randomColor();
 
     QBrush brush;
-    QPointF position;
     QPointF vel;
-    qreal radius;
     QColor innerColor;
     QColor outerColor;
 };
