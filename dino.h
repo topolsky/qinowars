@@ -24,7 +24,9 @@ public:
 
 private:
     QPointF position;
-    QPixmap dinoImage;
+    QPixmap dinoImageL;
+    QPixmap dinoImageR;
+    Direction cdir;
     QPointF vel;
     qreal width;
     qreal speed;

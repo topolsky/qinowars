@@ -7,6 +7,9 @@
 
 #include <math.h>
 #include <stdlib.h>
+#include <QTimer>
+#include <QDebug>
+
 
 #ifndef GL_MULTISAMPLE
 #define GL_MULTISAMPLE  0x809D
@@ -25,7 +28,9 @@ GLWidget::GLWidget(QWidget *parent)
     connect(&animationTimer, SIGNAL(timeout()), this, SLOT(animate()));
     animationTimer.start(25);
 
-
+    timer.setInterval(200);
+    timer.setSingleShot(false);
+    connect(&timer, SIGNAL(timeout()), this, SLOT(stopDino()));
     //setAutoFillBackground(false);
     setMinimumSize(400, 400);
     background = QPixmap(":/data/back01.jpg");
@@ -88,11 +93,12 @@ void GLWidget::keyPressEvent(QKeyEvent *event)
         dino->setDirection(Dino::DOWN);
         break;
     }
+    timer.stop();
 }
 
 void GLWidget::keyReleaseEvent(QKeyEvent *)
 {
-    dino->setDirection(Dino::STOP);
+    timer.start();
 }
 
 QSize GLWidget::sizeHint() const
@@ -113,7 +119,6 @@ void GLWidget::createBubbles(int number)
     }
 }
 
-//! [13]
 void GLWidget::animate()
 {
     QMutableListIterator<Bubble*> iter(bubbles);
@@ -125,9 +130,13 @@ void GLWidget::animate()
     dino->move(rect());
     update();
 }
-//! [13]
 
-//! [14]
+void GLWidget::stopDino()
+{
+    timer.stop();
+    dino->setDirection(Dino::STOP);
+}
+
 void GLWidget::setupViewport(int width, int height)
 {
     int side = qMin(width, height);
@@ -142,9 +151,7 @@ void GLWidget::setupViewport(int width, int height)
 #endif
     glMatrixMode(GL_MODELVIEW);
 }
-//! [14]
 
-//! [15]
 void GLWidget::drawInstructions(QPainter *painter)
 {
     QString text = tr("Click and drag with the left mouse button "
@@ -164,4 +171,3 @@ void GLWidget::drawInstructions(QPainter *painter)
                       rect.width(), rect.height(),
                       Qt::AlignCenter | Qt::TextWordWrap, text);
 }
-//! [15]

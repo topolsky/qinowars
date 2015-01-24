@@ -47,6 +47,7 @@
 class Bubble;
 class Dino;
 class QtLogo;
+class QTimer;
 
 class GLWidget : public QGLWidget
 {
@@ -67,16 +68,16 @@ protected:
 
 private slots:
     void animate();
+    void stopDino();
 
 private:
     void createBubbles(int number);
     void drawInstructions(QPainter *painter);
     void setupViewport(int width, int height);
 
-
+    QTimer timer;
     QColor qtGreen;
     QColor qtPurple;
-
     GLuint object;
     QPoint lastPos;
     QPixmap background;

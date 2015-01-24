@@ -4,20 +4,30 @@
 #include <QSvgRenderer>
 
 Dino::Dino(const QPointF &position, qreal width)
-    : position(position), width(width), speed(3)
+    : position(position), cdir(LEFT), width(width), speed(2)
 {
     QSvgRenderer renderer(QString(":/data/dino1.svg"));
     QImage img = QImage(width, width, QImage::Format_ARGB32);
     QPainter painter(&img);
     renderer.render(&painter);
-    dinoImage = QPixmap::fromImage(img);
+    dinoImageL = QPixmap::fromImage(img);
+    dinoImageR = QPixmap::fromImage(img.mirrored(true, false));
 }
 
 void Dino::drawDino(QPainter *painter)
 {
     painter->save();
     painter->translate(position.x(), position.y());
-    painter->drawPixmap(0, 0, dinoImage);
+    switch(cdir) {
+    case LEFT:
+        painter->drawPixmap(0, 0, dinoImageL);
+        break;
+    case RIGHT:
+        painter->drawPixmap(0, 0, dinoImageR);
+        break;
+    default:
+        break;
+    }
     painter->restore();
 }
 
@@ -50,6 +60,8 @@ QRectF Dino::rect()
 
 void Dino::setDirection(Dino::Direction dir)
 {
+    if (dir == LEFT || dir == RIGHT)
+        cdir = dir;
     switch(dir) {
     case LEFT:
         vel = QPointF(-speed, 0);
