@@ -42,12 +42,12 @@
 #define GLWIDGET_H
 
 #include <QGLWidget>
+#include <QTime>
 #include <QTimer>
 
 class Bubble;
 class Dino;
 class QtLogo;
-class QTimer;
 
 class GLWidget : public QGLWidget
 {
@@ -80,6 +80,7 @@ private:
     QTimer timer;
     QTimer clsTimer;//collision timer
     QTimer coolDown;
+    QTime overall;
     QColor qtGreen;
     QColor qtPurple;
     GLuint object;

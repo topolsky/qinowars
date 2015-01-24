@@ -1,7 +1,7 @@
 #include "bubble.h"
 
 Bubble::Bubble(const QPointF &position, qreal radius, const QPointF &velocity)
-    : position(position), vel(velocity), radius(radius)
+    : position(position), radius(radius), vel(velocity)
 {
     innerColor = randomColor();
     outerColor = randomColor();

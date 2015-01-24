@@ -3,7 +3,6 @@
 #include "glwidget.h"
 
 #include <QMouseEvent>
-#include <QTime>
 
 #include <math.h>
 #include <stdlib.h>
@@ -29,7 +28,7 @@ GLWidget::GLWidget(QWidget *parent)
     connect(&animationTimer, SIGNAL(timeout()), this, SLOT(animate()));
     animationTimer.start(25);
 
-    timer.setInterval(200);
+    timer.setInterval(250);
     timer.setSingleShot(false);
     connect(&timer, SIGNAL(timeout()), this, SLOT(stopDino()));
     clsTimer.setInterval(200);
@@ -39,6 +38,7 @@ GLWidget::GLWidget(QWidget *parent)
     coolDown.setSingleShot(true);
     connect(&coolDown, SIGNAL(timeout()), &clsTimer, SLOT(start()));
     coolDown.start();
+    overall.start();
     //setAutoFillBackground(false);
     setMinimumSize(1200, 800);
     background = QPixmap(":/data/back01.jpg");
@@ -146,6 +146,7 @@ void GLWidget::stopDino()
 {
     timer.stop();
     dino->setDirection(Dino::STOP);
+    qDebug() << "Stop dino";
 }
 
 void GLWidget::checkCollision()
@@ -162,7 +163,12 @@ void GLWidget::checkCollision()
             dino->setCoolDown(true);
             if (lives <= 0) {
                 exitGame = true;
-                QMessageBox::information(this, "Koniec hry", "Vďaka že si si zahral/a. To je koniec!");
+                this->stopDino();
+                clsTimer.stop();
+                coolDown.stop();
+                QMessageBox::information(this, "Koniec hry",
+                                         QString("Vďaka že si si zahral/a. Vydržal/a si %1 sekúnd. To je koniec!")
+                                         .arg(overall.elapsed()/1000));
                 exit(1);
             }
             break;
