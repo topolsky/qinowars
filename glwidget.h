@@ -79,6 +79,7 @@ private:
 
     GLuint object;
     QPoint lastPos;
+    QPixmap background;
     QList<Bubble*> bubbles;
     Dino *dino;
     QTimer animationTimer;

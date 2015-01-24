@@ -2,5 +2,7 @@
     <qresource prefix="/">
         <file>data/back01.jpg</file>
         <file>data/dino.png</file>
+        <file>data/dino.svg</file>
+        <file>data/dino1.svg</file>
     </qresource>
 </RCC>

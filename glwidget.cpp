@@ -25,8 +25,10 @@ GLWidget::GLWidget(QWidget *parent)
     connect(&animationTimer, SIGNAL(timeout()), this, SLOT(animate()));
     animationTimer.start(25);
 
+
     //setAutoFillBackground(false);
-    setMinimumSize(200, 200);
+    setMinimumSize(400, 400);
+    background = QPixmap(":/data/back01.jpg");
     setWindowTitle(tr("OJO DINOWARS"));
 }
 
@@ -44,7 +46,7 @@ void GLWidget::paintEvent(QPaintEvent *event)
     makeCurrent();
 
     QPainter painter(this);
-    painter.drawPixmap(0, 0, QPixmap(":/data/back01.jpg").scaled(size()));
+    painter.drawPixmap(0, 0, background.scaled(size()));
     painter.setRenderHint(QPainter::Antialiasing);
     foreach (Bubble *bubble, bubbles) {
         if (bubble->rect().intersects(event->rect()))

@@ -3,6 +3,7 @@
 
 #include <QPainter>
 
+
 class Dino
 {
 public:
@@ -23,8 +24,10 @@ public:
 
 private:
     QPointF position;
+    QPixmap dinoImage;
     QPointF vel;
     qreal width;
+    qreal speed;
 };
 
 #endif // DINO_H
