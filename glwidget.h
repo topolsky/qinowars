@@ -41,9 +41,12 @@
 #ifndef GLWIDGET_H
 #define GLWIDGET_H
 
+#include <memory>
 #include <QGLWidget>
 #include <QTime>
 #include <QTimer>
+#include <QHash>
+#include "movable.h"
 
 class Bubble;
 class Dino;
@@ -64,7 +67,7 @@ protected:
     void resizeGL(int width, int height);
     void showEvent(QShowEvent *event);
     void keyPressEvent(QKeyEvent *event);
-    void keyReleaseEvent(QKeyEvent *);
+    void keyReleaseEvent(QKeyEvent *event);
 
 private slots:
     void animate();
@@ -73,8 +76,11 @@ private slots:
 
 private:
     void createBubbles(int number);
+    Direction mapKey(int key);
     void drawInstructions(QPainter *painter);
     void setupViewport(int width, int height);
+    bool checkBubbleCollision(Bubble &bb);
+    void endGame();
     int lives;
     bool exitGame;
     QTimer timer;
@@ -86,7 +92,8 @@ private:
     GLuint object;
     QPoint lastPos;
     QPixmap background;
-    QList<Bubble*> bubbles;
+    QHash<Direction, int> keys;
+    std::vector<std::unique_ptr<Bubble> > bubbles;
     Dino *dino;
     QTimer animationTimer;
 };

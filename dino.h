@@ -1,31 +1,29 @@
 #ifndef DINO_H
 #define DINO_H
 
-#include <QPainter>
 
-class Dino
+#include "movable.h"
+
+class Dino : public Movable
 {
 public:
-    enum Direction {
-        STOP,
-        LEFT,
-        RIGHT,
-        UP,
-        DOWN
-    };
-
     Dino(const QPointF &position, qreal width);
 
-    void drawDino(QPainter *painter);
+    void draw(QPainter *painter);
     void move(const QRect &bbox);
     QRectF rect();
+    void placeDino(const QRect &bbox);
+
     void setDirection(Direction dir);
     bool collide(QPointF center, qreal radius);
     void setCoolDown(bool cd);
 
 private:
     bool coolDown;
+    bool aligned;//finish moving into align position
     QPointF position;
+    qint32 hstep;
+    qint32 vstep;
     QPixmap dinoImageL;
     QPixmap dinoImageR;
     Direction cdir;

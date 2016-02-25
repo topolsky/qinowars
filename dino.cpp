@@ -4,7 +4,15 @@
 #include <QSvgRenderer>
 
 Dino::Dino(const QPointF &position, qreal width)
-    : coolDown(false), position(position), cdir(LEFT), width(width), speed(4)
+    : Movable(position, QPointF(0, 0)),
+      coolDown(false),
+      aligned(false),
+      position(position),
+      hstep(40),
+      vstep(40),
+      cdir(Direction::LEFT),
+      width(width),
+      speed(4)
 {
     QSvgRenderer renderer(QString(":/data/dino1.svg"));
     QImage img = QImage(width, width, QImage::Format_ARGB32);
@@ -14,17 +22,22 @@ Dino::Dino(const QPointF &position, qreal width)
     dinoImageR = QPixmap::fromImage(img.mirrored(true, false));
 }
 
-void Dino::drawDino(QPainter *painter)
+void Dino::draw(QPainter *painter)
 {
     painter->save();
     if(coolDown)
         painter->setOpacity(0.5);
     painter->translate(position.x(), position.y());
     switch(cdir) {
-    case LEFT:
+    case Direction::LEFT:
+    case Direction::UP:
         painter->drawPixmap(0, 0, dinoImageL);
         break;
-    case RIGHT:
+    case Direction::RIGHT:
+    case Direction::DOWN:
+        painter->drawPixmap(0, 0, dinoImageR);
+        break;
+    case Direction::STOP:
         painter->drawPixmap(0, 0, dinoImageR);
         break;
     default:
@@ -35,7 +48,19 @@ void Dino::drawDino(QPainter *painter)
 
 void Dino::move(const QRect &bbox)
 {
-    position += vel;
+    if ((cdir == Direction::STOP && !aligned) || cdir != Direction::STOP) {
+        if (cdir == Direction::STOP && (qint32)position.x() % hstep == 0
+                && (qint32)position.y() % vstep == 0) {
+            aligned = true;
+        } else {
+            position += vel;
+        }
+    }
+    placeDino(bbox);
+}
+
+void Dino::placeDino(const QRect &bbox)
+{
     qreal leftOverflow = position.x() - bbox.left();
     qreal rightOverflow = position.x() + width - bbox.right();
     qreal topOverflow = position.y() - bbox.top();
@@ -52,6 +77,7 @@ void Dino::move(const QRect &bbox)
     } else if (bottomOverflow > 0.0) {
         position.setY(position.y() - bottomOverflow);
     }
+    //qDebug() << "DIno position:" << position;
 }
 
 QRectF Dino::rect()
@@ -60,24 +86,23 @@ QRectF Dino::rect()
                   2 * width, 2 * width);
 }
 
-void Dino::setDirection(Dino::Direction dir)
+void Dino::setDirection(Direction dir)
 {
-    if (dir == LEFT || dir == RIGHT)
-        cdir = dir;
+    cdir = dir;
     switch(dir) {
-    case LEFT:
+    case Direction::LEFT:
         vel = QPointF(-speed, 0);
         break;
-    case RIGHT:
+    case Direction::RIGHT:
         vel = QPointF(speed, 0);
         break;
-    case UP:
+    case Direction::UP:
         vel = QPointF(0, -speed);
         break;
-    case DOWN:
+    case Direction::DOWN:
         vel = QPointF(0, speed);
         break;
-    case STOP:
+    case Direction::STOP:
         vel = QPointF(0, 0);
         break;
     default:

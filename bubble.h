@@ -41,25 +41,22 @@
 #ifndef BUBBLE_H
 #define BUBBLE_H
 
-#include <QPainter>
+#include "movable.h"
 
-class Bubble
+class Bubble : public Movable
 {
 public:
-    Bubble(const QPointF &position, qreal radius, const QPointF &velocity);
+    Bubble(const QPointF &position, const QPointF &velocity, qreal radius);
 
-    void drawBubble(QPainter *painter);
+    void draw(QPainter *painter);
     void updateBrush();
     void move(const QRect &bbox);
     QRectF rect();
-    QPointF position;
     qreal radius;
 
 private:
     QColor randomColor();
-
     QBrush brush;
-    QPointF vel;
     QColor innerColor;
     QColor outerColor;
 };

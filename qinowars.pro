@@ -11,18 +11,21 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = qinowars
 TEMPLATE = app
 
+CONFIG += c++11
+
 
 SOURCES += main.cpp\
     glwidget.cpp \
     bubble.cpp \
-    dino.cpp
+    dino.cpp \
+    movable.cpp
 
 HEADERS  += \
     glwidget.h \
     bubble.h \
-    dino.h
-
-FORMS    +=
+    dino.h \
+    movable.h \
+    utils.h
 
 RESOURCES += \
     data.qrc
