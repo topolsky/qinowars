@@ -3,6 +3,14 @@
 #include <QPicture>
 #include <QSvgRenderer>
 
+const int spriteTypeCnt = 4;
+const int spriteW = 48;
+const int spriteH = 62;
+const int spriteLeft = 1;
+const int spriteRight = 2;
+const int spriteUp = 3;
+const int spriteDown = 0;
+
 Dino::Dino(const QPointF &position, qreal width)
     : Movable(position, QPointF(0, 0)),
       coolDown(false),
@@ -14,35 +22,29 @@ Dino::Dino(const QPointF &position, qreal width)
       width(width),
       speed(4)
 {
-    QSvgRenderer renderer(QString(":/data/dino1.svg"));
-    QImage img = QImage(width, width, QImage::Format_ARGB32);
-    QPainter painter(&img);
-    renderer.render(&painter);
-    dinoImageL = QPixmap::fromImage(img);
-    dinoImageR = QPixmap::fromImage(img.mirrored(true, false));
+    //QSvgRenderer renderer(QString(":/data/dino_sprites.png"));
+    QImage img = QImage(QString(":/data/dino_sprites.png"));
+    //QPainter painter(&img);
+    //renderer.render(&painter);
+    dinoImage = QPixmap::fromImage(img);
+    spritePositions[UP] = 0;
+    spritePositions[DOWN] = 0;
+    spritePositions[LEFT] = 0;
+    spritePositions[RIGHT] = 0;
 }
 
 void Dino::draw(QPainter *painter)
 {
+    QRect crop;
     painter->save();
     if(coolDown)
         painter->setOpacity(0.5);
     painter->translate(position.x(), position.y());
-    switch(cdir) {
-    case Direction::LEFT:
-    case Direction::UP:
-        painter->drawPixmap(0, 0, dinoImageL);
-        break;
-    case Direction::RIGHT:
-    case Direction::DOWN:
-        painter->drawPixmap(0, 0, dinoImageR);
-        break;
-    case Direction::STOP:
-        painter->drawPixmap(0, 0, dinoImageR);
-        break;
-    default:
-        break;
-    }
+    crop = getSpriteCrop();
+    qDebug() << "drawing:" << crop;
+    dinoImageLast = dinoImage.copy(crop);
+
+    painter->drawPixmap(0, 0, dinoImageLast);
     painter->restore();
 }
 
@@ -121,4 +123,38 @@ bool Dino::collide(QPointF center, qreal radius)
 void Dino::setCoolDown(bool cd)
 {
     coolDown = cd;
+}
+
+QRect Dino::getSpriteCrop()
+{
+    QRect rect;
+    int xpos, ypos;
+    if (cdir != Direction::STOP) {
+        spritePositions[cdir]++;
+    }
+    if (spritePositions[cdir] >= spriteTypeCnt) {
+        spritePositions[cdir] = 0;
+    }
+    xpos = spritePositions[cdir] * spriteW;
+
+    switch(cdir) {
+    case Direction::LEFT:
+        ypos = spriteLeft * spriteH;
+        break;
+    case Direction::UP:
+        ypos = spriteUp * spriteH;
+        break;
+    case Direction::RIGHT:
+        ypos = spriteRight * spriteH;
+        break;
+    case Direction::DOWN:
+        ypos = spriteDown * spriteH;
+        break;
+    case Direction::STOP:
+    default:
+        break;
+    }
+    qDebug() << xpos << ypos << spriteW << spriteH;
+    rect = QRect(xpos, ypos, spriteW, spriteH);
+    return rect;
 }

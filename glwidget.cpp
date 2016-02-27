@@ -91,7 +91,7 @@ void GLWidget::showEvent(QShowEvent *event)
     /*QPointF position(width()*(0.1 + (0.8*qrand()/(RAND_MAX+1.0))),
                     height()*(0.1 + (0.8*qrand()/(RAND_MAX+1.0))));*/
     QPointF position(0, 0);
-    //createBubbles(10 - bubbles.count());
+    createBubbles(10);
     dino = new Dino(position, 40);
 }
 
