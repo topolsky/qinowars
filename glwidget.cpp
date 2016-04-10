@@ -132,7 +132,7 @@ void GLWidget::createBubbles(int number)
         qreal radius = qMin(width(), height()) * (0.0125 + 0.0875 * qrand() / (RAND_MAX + 1.0));
         QPointF velocity(width() * 0.0125 * (-0.5 + qrand() / (RAND_MAX + 1.0)),
                         height() * 0.0125 * (-0.5 + qrand() / (RAND_MAX + 1.0)));
-        std::unique_ptr<Bubble> newbb(new Bubble(position, velocity, radius));
+        std::unique_ptr<Bubble> newbb(new Bubble(position, QPointF(0, 0), radius));
         bubbles.push_back(std::move(newbb));
     }
 }

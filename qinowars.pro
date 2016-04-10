@@ -18,14 +18,16 @@ SOURCES += main.cpp\
     glwidget.cpp \
     bubble.cpp \
     dino.cpp \
-    movable.cpp
+    movable.cpp \
+    rock.cpp
 
 HEADERS  += \
     glwidget.h \
     bubble.h \
     dino.h \
     movable.h \
-    utils.h
+    utils.h \
+    rock.h
 
 RESOURCES += \
     data.qrc
