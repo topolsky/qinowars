@@ -11,7 +11,7 @@ Bubble::Bubble(const QPointF &position, const QPointF &velocity, qreal radius)
 void Bubble::updateBrush()
 {
     QRadialGradient gradient(QPointF(radius, radius), radius,
-                             QPointF(radius*0.5, radius*0.5));
+                             QPointF(radius * 0.5, radius * 0.5));
 
     gradient.setColorAt(0, QColor(255, 255, 255, 255));
     gradient.setColorAt(0.25, innerColor);
@@ -24,16 +24,16 @@ void Bubble::draw(QPainter *painter)
     painter->save();
     painter->translate(position().x() - radius, position().y() - radius);
     painter->setBrush(brush);
-    painter->drawEllipse(0, 0, int(2*radius), int(2*radius));
+    painter->drawEllipse(0, 0, int(2 * radius), int(2 * radius));
     painter->restore();
 }
 
 QColor Bubble::randomColor()
 {
-    int red = int(205 + 50.0*qrand()/(RAND_MAX+1.0));
-    int green = int(205 + 50.0*qrand()/(RAND_MAX+1.0));
-    int blue = int(205 + 50.0*qrand()/(RAND_MAX+1.0));
-    int alpha = int(91 + 100.0*qrand()/(RAND_MAX+1.0));
+    int red = int(205 + 50.0 * qrand() / (RAND_MAX + 1.0));
+    int green = int(205 + 50.0 * qrand() / (RAND_MAX + 1.0));
+    int blue = int(205 + 50.0 * qrand() / (RAND_MAX + 1.0));
+    int alpha = int(91 + 100.0 * qrand() / (RAND_MAX + 1.0));
 
     return QColor(red, green, blue, alpha);
 }

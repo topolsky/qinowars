@@ -41,7 +41,6 @@ void Dino::draw(QPainter *painter)
         painter->setOpacity(0.5);
     painter->translate(position.x(), position.y());
     crop = getSpriteCrop();
-    qDebug() << "drawing:" << crop;
     dinoImageLast = dinoImage.copy(crop);
 
     painter->drawPixmap(0, 0, dinoImageLast);
@@ -79,7 +78,6 @@ void Dino::placeDino(const QRect &bbox)
     } else if (bottomOverflow > 0.0) {
         position.setY(position.y() - bottomOverflow);
     }
-    //qDebug() << "DIno position:" << position;
 }
 
 QRectF Dino::rect()
@@ -114,9 +112,9 @@ void Dino::setDirection(Direction dir)
 
 bool Dino::collide(QPointF center, qreal radius)
 {
-    QRectF we(position.x(),position.y(),width, width);
-    qreal hr = radius/2.0;
-    QRectF them(center.x()-hr, center.y()-hr, radius, radius);
+    QRectF we(position.x(), position.y(), width, width);
+    qreal hr = radius / 2.0;
+    QRectF them(center.x() - hr, center.y() - hr, radius, radius);
     return we.intersects(them);
 }
 
@@ -154,7 +152,6 @@ QRect Dino::getSpriteCrop()
     default:
         break;
     }
-    qDebug() << xpos << ypos << spriteW << spriteH;
     rect = QRect(xpos, ypos, spriteW, spriteH);
     return rect;
 }

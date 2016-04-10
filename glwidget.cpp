@@ -23,7 +23,7 @@ const int g_WStep = 40;
 #endif
 
 GLWidget::GLWidget(QWidget *parent)
-    : QGLWidget(QGLFormat(QGL::SampleBuffers), parent), lives(1), exitGame(false)
+    : QGLWidget(QGLFormat(QGL::SampleBuffers), parent), lives(4), exitGame(false)
 {
     QTime midnight(0, 0, 0);
     qsrand(midnight.secsTo(QTime::currentTime()));
@@ -49,7 +49,7 @@ GLWidget::GLWidget(QWidget *parent)
     //setAutoFillBackground(false);
     setMinimumSize(1200, 700);
     background = QPixmap(":/data/back01.jpg");
-    setWindowTitle(tr("OJO DINOWARS"));
+    setWindowTitle(tr("QINOWARS"));
 
 }
 
@@ -88,8 +88,6 @@ void GLWidget::resizeGL(int width, int height)
 void GLWidget::showEvent(QShowEvent *event)
 {
     Q_UNUSED(event);
-    /*QPointF position(width()*(0.1 + (0.8*qrand()/(RAND_MAX+1.0))),
-                    height()*(0.1 + (0.8*qrand()/(RAND_MAX+1.0))));*/
     QPointF position(0, 0);
     createBubbles(10);
     dino = new Dino(position, 40);
@@ -129,11 +127,11 @@ QSize GLWidget::sizeHint() const
 void GLWidget::createBubbles(int number)
 {
     for (int i = 0; i < number; ++i) {
-        QPointF position(width()*(0.1 + (0.8*qrand()/(RAND_MAX+1.0))),
-                        height()*(0.1 + (0.8*qrand()/(RAND_MAX+1.0))));
-        qreal radius = qMin(width(), height())*(0.0125 + 0.0875*qrand()/(RAND_MAX+1.0));
-        QPointF velocity(width()*0.0125*(-0.5 + qrand()/(RAND_MAX+1.0)),
-                        height()*0.0125*(-0.5 + qrand()/(RAND_MAX+1.0)));
+        QPointF position(width() * (0.1 + (0.8 * qrand() / (RAND_MAX + 1.0))),
+                        height() * (0.1 + (0.8 * qrand() / (RAND_MAX + 1.0))));
+        qreal radius = qMin(width(), height()) * (0.0125 + 0.0875 * qrand() / (RAND_MAX + 1.0));
+        QPointF velocity(width() * 0.0125 * (-0.5 + qrand() / (RAND_MAX + 1.0)),
+                        height() * 0.0125 * (-0.5 + qrand() / (RAND_MAX + 1.0)));
         std::unique_ptr<Bubble> newbb(new Bubble(position, velocity, radius));
         bubbles.push_back(std::move(newbb));
     }
@@ -233,21 +231,21 @@ void GLWidget::drawInstructions(QPainter *painter)
 {
     QString text;
     if (!exitGame)
-        text = tr("Máš ešte %1 životov, čas: %2").arg(lives).arg(overall.elapsed()/1000);
+        text = tr("%1 lives remaining, time: %2").arg(lives).arg(overall.elapsed()/1000);
     else
-        text = tr("Koniec hry!");
+        text = tr("Game Over!");
     QFontMetrics metrics = QFontMetrics(font());
     int border = qMax(4, metrics.leading());
 
-    QRect rect = metrics.boundingRect(0, 0, width() - 2*border, int(height()*0.125),
+    QRect rect = metrics.boundingRect(0, 0, width() - 2 * border, int(height() * 0.125),
                                       Qt::AlignCenter | Qt::TextWordWrap, text);
     painter->setRenderHint(QPainter::TextAntialiasing);
-    painter->fillRect(QRect(0, 0, width(), rect.height() + 2*border),
+    painter->fillRect(QRect(0, 0, width(), rect.height() + 2 * border),
                      QColor(0, 0, 0, 127));
     painter->setPen(Qt::white);
-    painter->fillRect(QRect(0, 0, width(), rect.height() + 2*border),
+    painter->fillRect(QRect(0, 0, width(), rect.height() + 2 * border),
                       QColor(0, 0, 0, 127));
-    painter->drawText((width() - rect.width())/2, border,
+    painter->drawText((width() - rect.width()) / 2, border,
                       rect.width(), rect.height(),
                       Qt::AlignCenter | Qt::TextWordWrap, text);
 }
